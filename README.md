@@ -22,4 +22,4 @@ A student management system for college. Final year college project.
 
 ---
 
-**Last Updated:** February 14, 2026
+
