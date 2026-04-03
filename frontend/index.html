@@ -50,6 +50,19 @@ height:50px;
 border-radius:50%;
 object-fit:cover;
 }
+
+/* CHART CARD */
+.chart-card{
+margin-top:20px;
+background:white;
+padding:20px;
+border-radius:10px;
+box-shadow:0 2px 5px rgba(0,0,0,0.1);
+}
+
+.chart-card canvas{
+max-height:300px;
+}
 </style>
 </head>
 
@@ -78,6 +91,12 @@ object-fit:cover;
 <h3>Total Students</h3>
 <p id="totalStudents">0</p>
 </div>
+</div>
+
+<!-- COURSE CHART -->
+<div class="chart-card">
+<h3>Students per Course</h3>
+<canvas id="courseChart"></canvas>
 </div>
 
 <h2>Add / Update Student</h2>
@@ -142,7 +161,6 @@ object-fit:cover;
 </div>
 </div>
 
-
 <!-- STUDENT VIEW MODAL -->
 
 <div id="studentModal" class="modal">
@@ -164,11 +182,11 @@ object-fit:cover;
 
 </div>
 
-
 <script src="js/main.js"></script>
 
-<script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
+<script>
 document.getElementById("exportExcelBtn").addEventListener("click",()=>{
 window.location.href="/api/students/export";
 });
@@ -176,7 +194,6 @@ window.location.href="/api/students/export";
 document.getElementById("exportPdfBtn").addEventListener("click",()=>{
 window.location.href="/api/students/export-pdf";
 });
-
 </script>
 
 </body>

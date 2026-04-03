@@ -400,6 +400,8 @@ async function loadStats(){
 
   document.getElementById("totalStudents").innerText = data.students;
 
+  loadCourseChart();
+
 }
 
 /* ------------------------ */
@@ -430,3 +432,34 @@ document.getElementById("studentModal").style.display="none";
 /* INITIAL LOAD */
 
 loadStudents();
+
+/* ------------------------ */
+/* COURSE CHART */
+
+async function loadCourseChart(){
+
+const res = await fetch("/api/stats/courses");
+
+const data = await res.json();
+
+const labels = data.map(d => d.course);
+
+const values = data.map(d => d.count);
+
+const ctx = document.getElementById("courseChart");
+
+if(!ctx) return;
+
+new Chart(ctx,{
+type:"bar",
+data:{
+labels:labels,
+datasets:[{
+label:"Students",
+data:values,
+backgroundColor:"#2ecc71"
+}]
+}
+});
+
+}

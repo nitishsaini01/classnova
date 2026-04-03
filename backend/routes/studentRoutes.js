@@ -205,4 +205,24 @@ router.post("/students/:id/upload", auth, uploadImage.single("profile_pic"), (re
   });
 });
 
+/* -------------------- COURSE STATS FOR CHART -------------------- */
+
+router.get("/stats/courses", auth, (req,res)=>{
+
+const sql = `
+SELECT course, COUNT(*) as count
+FROM students
+GROUP BY course
+`;
+
+db.query(sql,(err,result)=>{
+
+if(err) return res.status(500).json(err);
+
+res.json(result);
+
+});
+
+});
+
 module.exports = router;
