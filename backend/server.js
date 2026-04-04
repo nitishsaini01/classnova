@@ -1,3 +1,6 @@
+const authRoutes = require("./routes/authRoutes");
+
+
 const express = require("express");
 const cors = require("cors");
 const path = require("path");
@@ -15,6 +18,7 @@ app.use(express.json());
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 // API Routes
+app.use("/api", authRoutes);
 app.use("/api", studentRoutes);
 app.use("/api/courses", courseRoutes);
 
@@ -23,7 +27,7 @@ app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Default route -> open dashboard
 app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../frontend/dashboard.html"));
+res.sendFile(path.join(__dirname, "../frontend/login.html"));
 });
 
 // Start server
