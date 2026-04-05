@@ -1,0 +1,96 @@
+/* PAGE BACKGROUND */
+
+body{
+margin:0;
+font-family:Arial, Helvetica, sans-serif;
+
+background:linear-gradient(135deg,#2ecc71,#3498db);
+
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+}
+
+/* LOGIN CONTAINER */
+
+.login-container{
+width:100%;
+display:flex;
+justify-content:center;
+align-items:center;
+}
+
+/* LOGIN CARD */
+
+.login-card{
+
+width:420px;          /* bigger width */
+padding:50px;         /* more space inside */
+
+background:white;
+
+border-radius:12px;
+
+box-shadow:0 10px 25px rgba(0,0,0,0.2);
+
+text-align:center;
+}
+
+/* TITLE */
+
+.login-card h1{
+margin:0;
+font-size:32px;
+color:#2c3e50;
+}
+
+.subtitle{
+margin-top:8px;
+margin-bottom:30px;
+color:#7f8c8d;
+}
+
+/* INPUT FIELDS */
+
+.login-card input{
+
+width:100%;
+padding:14px;
+margin-bottom:18px;
+
+border:1px solid #ddd;
+border-radius:6px;
+
+font-size:14px;
+}
+
+/* BUTTON */
+
+.login-card button{
+
+width:100%;
+padding:14px;
+
+background:#2ecc71;
+color:white;
+
+border:none;
+border-radius:6px;
+
+font-size:16px;
+cursor:pointer;
+
+transition:0.3s;
+}
+
+.login-card button:hover{
+background:#27ae60;
+}
+
+/* ERROR MESSAGE */
+
+.error{
+margin-top:15px;
+color:red;
+}

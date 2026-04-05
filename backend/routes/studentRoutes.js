@@ -5,7 +5,6 @@ const ExcelJS = require("exceljs");
 const PDFDocument = require("pdfkit");
 const multer = require("multer");
 const fs = require("fs");
-const path = require("path");
 const auth = require("../middleware/authMiddleware");
 
 /* -------------------- MULTER SETUP -------------------- */
@@ -102,7 +101,8 @@ router.delete("/students/:id", auth, (req, res) => {
 /* -------------------- BULK DELETE -------------------- */
 router.post("/students/bulk-delete", auth, (req, res) => {
   const { ids } = req.body;
-  if (!ids || !Array.isArray(ids) || ids.length === 0) return res.status(400).json({ message: "No student IDs provided" });
+  if (!ids || !Array.isArray(ids) || ids.length === 0)
+    return res.status(400).json({ message: "No student IDs provided" });
 
   const placeholders = ids.map(() => "?").join(",");
   const sql = `DELETE FROM students WHERE id IN (${placeholders})`;
@@ -117,6 +117,34 @@ router.get("/stats", auth, (req, res) => {
   db.query("SELECT COUNT(*) as total FROM students", (err, result) => {
     if (err) return res.status(500).json(err);
     res.json({ students: result[0].total });
+  });
+});
+
+/* -------------------- COURSE STATS FOR CHART -------------------- */
+router.get("/stats/courses", auth, (req, res) => {
+  const sql = `
+    SELECT course, COUNT(*) as count
+    FROM students
+    GROUP BY course
+  `;
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
+  });
+});
+
+/* -------------------- STUDENT GROWTH -------------------- */
+router.get("/stats/growth", auth, (req, res) => {
+  const sql = `
+    SELECT DATE_FORMAT(created_at,'%Y-%m') as month,
+           COUNT(*) as count
+    FROM students
+    GROUP BY month
+    ORDER BY month
+  `;
+  db.query(sql, (err, result) => {
+    if (err) return res.status(500).json(err);
+    res.json(result);
   });
 });
 
@@ -204,70 +232,5 @@ router.post("/students/:id/upload", auth, uploadImage.single("profile_pic"), (re
     res.json({ message: "Profile picture uploaded", path: newPath.replace(/\\/g, "/") });
   });
 });
-
-/* -------------------- COURSE STATS FOR CHART -------------------- */
-
-router.get("/stats/courses", auth, (req,res)=>{
-
-const sql = `
-SELECT course, COUNT(*) as count
-FROM students
-GROUP BY course
-`;
-
-db.query(sql,(err,result)=>{
-
-if(err) return res.status(500).json(err);
-
-res.json(result);
-
-});
-
-});
-
-
-/* -------------------- STUDENTS PER COURSE -------------------- */
-
-router.get("/stats/courses", auth, (req,res)=>{
-
-const sql = `
-SELECT course, COUNT(*) as count
-FROM students
-GROUP BY course
-`;
-
-db.query(sql,(err,result)=>{
-
-if(err) return res.status(500).json(err);
-
-res.json(result);
-
-});
-
-});
-
-
-/* -------------------- STUDENT GROWTH -------------------- */
-
-router.get("/stats/growth", auth, (req,res)=>{
-
-const sql = `
-SELECT DATE_FORMAT(created_at,'%Y-%m') as month,
-COUNT(*) as count
-FROM students
-GROUP BY month
-ORDER BY month
-`;
-
-db.query(sql,(err,result)=>{
-
-if(err) return res.status(500).json(err);
-
-res.json(result);
-
-});
-
-});
-
 
 module.exports = router;

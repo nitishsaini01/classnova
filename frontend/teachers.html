@@ -1,42 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+<meta charset="UTF-8">
 <title>Teachers</title>
 <link rel="stylesheet" href="css/style.css">
 </head>
-
 <body>
 
-<div class="dashboard">
-
-<div class="sidebar">
-<h2>ClassNova</h2>
-
-<ul>
-<li><a href="dashboard.html">Dashboard</a></li>
-<li><a href="students.html">Students</a></li>
-<li><a href="courses.html">Courses</a></li>
-<li><a href="teachers.html">Teachers</a></li>
-<li><a href="settings.html">Settings</a></li>
-<li><a href="#" onclick="logout()">Logout</a></li>
-</ul>
-</div>
+<div id="sidebarContainer"></div>
 
 <div class="main">
+<h1>Teacher Management</h1>
 
-<h1>Teachers</h1>
-<p>Teacher management coming soon.</p>
+<h3>Add Teacher</h3>
+<form id="teacherForm">
+<input type="text" id="teacherName" placeholder="Teacher Name" required>
+<input type="email" id="teacherEmail" placeholder="Email" required>
+<input type="text" id="teacherPhone" placeholder="Phone" required>
+<input type="text" id="teacherSubject" placeholder="Subject" required>
+<button type="submit">Add Teacher</button>
+</form>
 
-</div>
-
+<h3>Teachers List</h3>
+<table id="teachersTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Email</th>
+<th>Phone</th>
+<th>Subject</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
 </div>
 
 <script>
-function logout(){
-alert("Logged out");
-window.location.href="dashboard.html";
+const teacherForm = document.getElementById('teacherForm');
+const teachersTable = document.getElementById('teachersTable').querySelector('tbody');
+
+async function fetchTeachers() {
+  try {
+    const res = await fetch("http://localhost:3000/api/teachers");
+    const teachers = await res.json();
+    teachersTable.innerHTML = "";
+    teachers.forEach(t => {
+      const row = document.createElement('tr');
+      row.innerHTML = `<td>${t.name}</td><td>${t.email}</td><td>${t.phone}</td><td>${t.subject}</td>`;
+      teachersTable.appendChild(row);
+    });
+  } catch(err) { console.error(err); }
 }
+
+fetchTeachers();
+
+teacherForm.addEventListener('submit', async function(e){
+  e.preventDefault();
+  const name = document.getElementById('teacherName').value;
+  const email = document.getElementById('teacherEmail').value;
+  const phone = document.getElementById('teacherPhone').value;
+  const subject = document.getElementById('teacherSubject').value;
+
+  try {
+    await fetch("http://localhost:3000/api/teachers", {
+      method:"POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({name,email,phone,subject})
+    });
+    fetchTeachers();
+    teacherForm.reset();
+  } catch(err){ console.error(err); }
+});
 </script>
 
+<script>
+fetch("sidebar.html")
+  .then(response => response.text())
+  .then(data => { document.getElementById("sidebarContainer").innerHTML = data; });
+</script>
 </body>
 </html>
