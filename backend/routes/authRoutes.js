@@ -2,33 +2,72 @@ const express = require("express");
 const router = express.Router();
 const mysql = require("mysql2/promise");
 
-// MySQL connection pool
 const pool = mysql.createPool({
   host: "localhost",
   user: "root",
-  password: "mysqlnitish01", // your MySQL password
+  password: "mysqlnitish01",
   database: "classnova"
 });
 
-// Login route (plain text)
+/* LOGIN */
+
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+
+  const { name, email, roll } = req.body;
 
   try {
-    const [rows] = await pool.query(
-      "SELECT * FROM users WHERE username = ? AND password = ?",
-      [username, password]
-    );
 
-    if (rows.length > 0) {
-      res.json({ success: true });
-    } else {
-      res.json({ success: false });
+    /* CHECK TEACHER LOGIN */
+
+    if (name && email) {
+
+      const [teachers] = await pool.query(
+        "SELECT * FROM teachers WHERE name=? AND email=?",
+        [name, email]
+      );
+
+      if (teachers.length > 0) {
+
+        return res.json({
+          success: true,
+          role: "teacher",
+          user: teachers[0]
+        });
+
+      }
+
     }
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ success: false, error: "Server error" });
+
+    /* CHECK STUDENT LOGIN */
+
+    if (name && roll) {
+
+      const [students] = await pool.query(
+        "SELECT * FROM students WHERE name=? AND roll=?",
+        [name, roll]
+      );
+
+      if (students.length > 0) {
+
+        return res.json({
+          success: true,
+          role: "student",
+          user: students[0]
+        });
+
+      }
+
+    }
+
+    res.status(401).json({ success:false, message:"Invalid login" });
+
+  } catch (error) {
+
+    console.log(error);
+    res.status(500).json({ error: "Server error" });
+
   }
+
 });
 
 module.exports = router;

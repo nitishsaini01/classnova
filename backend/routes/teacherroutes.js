@@ -1,26 +1,51 @@
 const express = require("express");
 const router = express.Router();
-const Teacher = require("../models/teachermodel");
+const db = require("../config/db");
 
-// Get all teachers
-router.get("/", (req, res) => {
-  Teacher.getAllTeachers((err, teachers) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json(teachers);
+/* GET teachers */
+router.get("/", (req,res)=>{
+  db.query("SELECT * FROM teachers",(err,result)=>{
+    if(err) return res.json(err);
+    res.json(result);
   });
 });
 
-// Add new teacher
-router.post("/", (req, res) => {
-  const { name, email, phone, subject } = req.body;
-  if (!name || !email || !subject) {
-    return res.status(400).json({ error: "Name, email, and subject are required" });
+/* ADD teacher */
+router.post("/", (req,res)=>{
+
+  const {name,email,phone,subject} = req.body;
+
+  db.query(
+    "INSERT INTO teachers (name,email,phone,subject) VALUES (?,?,?,?)",
+    [name,email,phone,subject],
+    (err,result)=>{
+      if(err) return res.json(err);
+      res.json({message:"Teacher added"});
+    }
+  );
+
+});
+
+
+/* DELETE teacher */
+
+router.delete("/:id",(req,res)=>{
+
+const id = req.params.id;
+
+db.query(
+  "DELETE FROM teachers WHERE id=?",
+  [id],
+  (err,result)=>{
+
+    if(err) return res.json(err);
+
+    res.json({message:"Teacher deleted"});
+
   }
+);
 
-  Teacher.addTeacher({ name, email, phone, subject }, (err, result) => {
-    if (err) return res.status(500).json({ error: err });
-    res.json({ message: "Teacher added successfully", id: result.insertId });
-  });
 });
+
 
 module.exports = router;

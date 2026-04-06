@@ -5,7 +5,7 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const studentRoutes = require("./routes/studentRoutes");
 const courseRoutes = require("./routes/courseRoutes");
-const teacherRoutes = require("./routes/teacherroutes"); // <-- NEW
+const teacherRoutes = require("./routes/teacherroutes");
 
 const app = express();
 
@@ -16,13 +16,23 @@ app.use(express.json());
 // Serve uploaded profile pics
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// API Routes
-app.use("/api", authRoutes);
-app.use("/api", studentRoutes);
-app.use("/api/courses", courseRoutes);
-app.use("/api/teachers", teacherRoutes); // <-- NEW
+/* -------- API ROUTES -------- */
 
-// Serve frontend static files
+// AUTH LOGIN
+app.use("/api/auth", authRoutes);
+
+// STUDENTS
+app.use("/api", studentRoutes);
+
+// COURSES
+app.use("/api/courses", courseRoutes);
+
+// TEACHERS
+app.use("/api/teachers", teacherRoutes);
+
+/* -------- FRONTEND -------- */
+
+// Serve frontend files
 app.use(express.static(path.join(__dirname, "../frontend")));
 
 // Default route -> open login page
@@ -32,6 +42,7 @@ app.get("/", (req, res) => {
 
 // Start server
 const PORT = 3000;
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
